@@ -33,58 +33,73 @@ const Form = ({ form: { onSubmit, inputs, submitButton } }) => {
 
 export default Form;
 
+export const inputTypes = {
+	FIRST_NAME: 'FIRST_NAME',
+	LAST_NAME: "LAST_NAME",
+	AGE: 'AGE',
+	PHONE: 'PHONE',
+	EMAIL: 'EMAIL',
+	SUBDOMAIN: 'SUBDOMAIN',
+	ADDRESS: 'ADDRESS',
+}
+
 const validate = (values, inputs) => {
 	let errors = {};
+	const { EMAIL, FIRST_NAME, LAST_NAME, PHONE, AGE, SUBDOMAIN, ADDRESS } = inputTypes
+
 	inputs.forEach(input => {
 		if (input.validation) {
 			if (input.required && !values[input.name]) {
 				return errors[input.name] = "Required"
 			}
 			switch (input.name) {
-				case 'firstName':
-					if (values.firstName.length < 2) {
-						errors.firstName = 'O primeiro nome deve ter, pelo menos, 2 caracteres.'
+				case FIRST_NAME:
+					if (values[FIRST_NAME].length < 2) {
+						errors[FIRST_NAME] = 'O primeiro nome deve ter, pelo menos, 2 caracteres.'
 					}
-					if (typeof values.firstName !== 'string' || /\d/.test(values.firstName)) {
-						errors.firstName = 'O primeiro nome é invalido.'
-					}
-					break;
-				case 'lastName':
-					if (values.lastName.length < 2) {
-						errors.lastName = 'O último nome deve ter, pelo menos, 2 caracteres.'
-					}
-					if (typeof values.lastName !== 'string' || /\d/.test(values.lastName)) {
-						errors.lastName = 'O último nome é invalido.'
+					if (typeof values[FIRST_NAME] !== 'string' || /\d/.test(values[FIRST_NAME])) {
+						errors[FIRST_NAME] = 'O primeiro nome é invalido.'
 					}
 					break;
-				case 'age':
-					if (isNaN(values.age)) {
-						errors.age = 'A idade deve ser um número.'
+				case LAST_NAME:
+					if (values[LAST_NAME].length < 2) {
+						errors[LAST_NAME] = 'O último nome deve ter, pelo menos, 2 caracteres.'
 					}
-					if (values.age <= 0 && Number(values.age)) {
-						errors.age = 'A idade deve ser positiva.'
+					if (typeof values[LAST_NAME] !== 'string' || /\d/.test(values[LAST_NAME])) {
+						errors[LAST_NAME] = 'O último nome é invalido.'
+					}
+					break;
+				case AGE:
+					if (isNaN(values[AGE])) {
+						errors[AGE] = 'A idade deve ser um número.'
+					}
+					if (values[AGE] <= 0 && Number(values[AGE])) {
+						errors[AGE] = 'A idade deve ser positiva.'
+					}
+					if (values[AGE] > 120 && Number(values[AGE])) {
+						errors[AGE] = 'A idade deve ser inferior a 120 anos.'
 					}
 					break
-				case 'phone':
-					if (isNaN(values.phone)) {
-						errors.phone = 'O contacto telefónico é invalido.'
+				case PHONE:
+					if (isNaN(values[PHONE])) {
+						errors[PHONE] = 'O contacto telefónico é invalido.'
 					}
-					if (values.phone.length < 9) {
-						errors.phone = 'O contacto telefónico deve ter, pelo menos 9 números.'
+					if (values[PHONE].length < 9) {
+						errors[PHONE] = 'O contacto telefónico deve ter, pelo menos 9 números.'
 					}
 					break
-				case 'email':
-					if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email))
-						errors.email = 'Endereço de e-mail inválido';
+				case EMAIL:
+					if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values[EMAIL]))
+						errors[EMAIL] = 'Endereço de e-mail inválido';
 					break
-				case 'subdomain':
-					if (values.subdomain.length > 10) {
-						errors.subdomain = "O subdomínio só pode ter 10 caracteres."
+				case SUBDOMAIN:
+					if (values[SUBDOMAIN].length > 10) {
+						errors[SUBDOMAIN] = "O subdomínio só pode ter 10 caracteres."
 					}
-					if (/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/i.test(values.subdomain))
-						errors.subdomain = "Subdomínio inválido";
+					if (/[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/i.test(values[SUBDOMAIN]))
+						errors[SUBDOMAIN] = "Subdomínio inválido";
 					break
-				case 'address':
+				case ADDRESS:
 					break
 				default:
 					break

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Form from './components/Form';
+import Form, { inputTypes } from './components/Form';
 
 class App extends Component {
   onSubmit = (values, actions) => {
@@ -26,14 +26,16 @@ class App extends Component {
         </div>
       );
 
+    const { EMAIL, FIRST_NAME, LAST_NAME, PHONE, AGE, SUBDOMAIN } = inputTypes
+
     const form = {
       name: 'Test form',
       onSubmit: (values, actions) => this.onSubmit(values, actions),
       inputs: [
         {
           id: 1,
-          name: 'email',
-          type: 'email',
+          name: EMAIL,
+          type: EMAIL,
           initialValue: '',
           validation: true,
           required: true,
@@ -42,8 +44,8 @@ class App extends Component {
         },
         {
           id: 2,
-          name: 'firstName',
-          type: 'firstName',
+          name: FIRST_NAME,
+          type: FIRST_NAME,
           initialValue: '',
           validation: true,
           required: true,
@@ -52,8 +54,8 @@ class App extends Component {
         },
         {
           id: 3,
-          name: 'lastName',
-          type: 'lastName',
+          name: LAST_NAME,
+          type: LAST_NAME,
           initialValue: '',
           validation: true,
           required: true,
@@ -62,8 +64,8 @@ class App extends Component {
         },
         {
           id: 4,
-          name: 'phone',
-          type: 'phone',
+          name: PHONE,
+          type: PHONE,
           initialValue: '',
           validation: true,
           required: false,
@@ -72,8 +74,8 @@ class App extends Component {
         },
         {
           id: 5,
-          name: 'age',
-          type: 'age',
+          name: AGE,
+          type: AGE,
           initialValue: '',
           validation: true,
           required: true,
@@ -82,8 +84,8 @@ class App extends Component {
         },
         {
           id: 6,
-          name: 'subdomain',
-          type: 'subdomain',
+          name: SUBDOMAIN,
+          type: SUBDOMAIN,
           initialValue: '',
           validation: true,
           required: true,
