@@ -1,14 +1,16 @@
 import React from 'react';
 import { Formik, Field } from 'formik';
+import { texts } from '../../utils/validations';
 
-const Form = ({ form: { onSubmit, inputs, submitButton } }) => {
+const Form = ({ form: { onSubmit, inputs, submitButton, language } }) => {
+	;
 	let initialValues = {};
 	inputs.map(input => initialValues[input.type] = input.initialValue);
 	return (
 		<Formik
 			initialValues={initialValues}
 			onSubmit={(values, actions) => onSubmit(values, actions)}
-			validate={(values) => validate(values, inputs)}
+			validate={(values) => validate(values, inputs, language)}
 			render={(props) => (
 				<form onSubmit={props.handleSubmit}>
 					{inputs.map(({ id, type, name, placeholder, component }) => {
@@ -41,65 +43,83 @@ export const inputTypes = {
 	EMAIL: 'EMAIL',
 	SUBDOMAIN: 'SUBDOMAIN',
 	ADDRESS: 'ADDRESS',
+	CHECKBOX: 'CHECKBOX',
+	PASSWORD: 'PASSWORD',
+	REPEAT_PASSWORD: 'REPEAT_PASSWORD',
+	SELECT: 'SELECT'
 }
 
-const validate = (values, inputs) => {
+const validate = (values, inputs, language) => {
 	let errors = {};
-	const { EMAIL, FIRST_NAME, LAST_NAME, PHONE, AGE, SUBDOMAIN, ADDRESS } = inputTypes
-
+	const { EMAIL, FIRST_NAME, LAST_NAME, PHONE, AGE, SUBDOMAIN, ADDRESS, PASSWORD, REPEAT_PASSWORD, SELECT } = inputTypes
+	const validations = texts(language);
 	inputs.forEach(input => {
 		if (input.validation) {
 			if (input.required && !values[input.name]) {
-				return errors[input.name] = "Required"
+				return errors[input.name] = validations.required;
 			}
 			switch (input.name) {
 				case FIRST_NAME:
 					if (values[FIRST_NAME].length < 2) {
-						errors[FIRST_NAME] = 'O primeiro nome deve ter, pelo menos, 2 caracteres.'
+						errors[FIRST_NAME] = validations.firstName.length;
 					}
 					if (typeof values[FIRST_NAME] !== 'string' || /\d/.test(values[FIRST_NAME])) {
-						errors[FIRST_NAME] = 'O primeiro nome é invalido.'
+						errors[FIRST_NAME] = validations.lastName.string
 					}
 					break;
 				case LAST_NAME:
 					if (values[LAST_NAME].length < 2) {
-						errors[LAST_NAME] = 'O último nome deve ter, pelo menos, 2 caracteres.'
+						errors[LAST_NAME] = validations.lastName.length;
 					}
 					if (typeof values[LAST_NAME] !== 'string' || /\d/.test(values[LAST_NAME])) {
-						errors[LAST_NAME] = 'O último nome é invalido.'
+						errors[LAST_NAME] = validations.lastName.string;
 					}
 					break;
 				case AGE:
-					if (isNaN(values[AGE])) {
-						errors[AGE] = 'A idade deve ser um número.'
+					if (Number.isNaN(Number(values[AGE]))) {
+						errors[AGE] = validations.age.number
 					}
 					if (values[AGE] <= 0 && Number(values[AGE])) {
-						errors[AGE] = 'A idade deve ser positiva.'
+						errors[AGE] = validations.age.positive
 					}
 					if (values[AGE] > 120 && Number(values[AGE])) {
-						errors[AGE] = 'A idade deve ser inferior a 120 anos.'
+						errors[AGE] = validations.age.maximum
 					}
 					break
 				case PHONE:
-					if (isNaN(values[PHONE])) {
-						errors[PHONE] = 'O contacto telefónico é invalido.'
+					if (Number.isNaN(Number(values[PHONE]))) {
+						errors[PHONE] = validations.phone.number
 					}
 					if (values[PHONE].length < 9) {
-						errors[PHONE] = 'O contacto telefónico deve ter, pelo menos 9 números.'
+						errors[PHONE] = validations.phone.length
 					}
 					break
 				case EMAIL:
 					if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values[EMAIL]))
-						errors[EMAIL] = 'Endereço de e-mail inválido';
+						errors[EMAIL] = validations.email.invalid
 					break
 				case SUBDOMAIN:
 					if (values[SUBDOMAIN].length > 10) {
-						errors[SUBDOMAIN] = "O subdomínio só pode ter 10 caracteres."
+						errors[SUBDOMAIN] = validations.subdomain.length
 					}
 					if (/[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/i.test(values[SUBDOMAIN]))
-						errors[SUBDOMAIN] = "Subdomínio inválido";
+						errors[SUBDOMAIN] = validations.subdomain.invalid
 					break
 				case ADDRESS:
+					break
+				case PASSWORD:
+					if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/i.test(values[PASSWORD]))
+						errors[PASSWORD] = validations.password.weak
+					break
+				case REPEAT_PASSWORD:
+					if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/i.test(values[REPEAT_PASSWORD]))
+						errors[REPEAT_PASSWORD] = validations.repeat_password.weak
+					if (values[PASSWORD] && values[PASSWORD] !== values[REPEAT_PASSWORD])
+						errors[REPEAT_PASSWORD] = validations.repeat_password.different
+					break
+				case SELECT:
+					if (values[SELECT] === 0)
+						errors[SELECT] = validations.select.empty
 					break
 				default:
 					break
